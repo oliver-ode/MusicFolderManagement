@@ -9,7 +9,10 @@ for root, dirs, files in os.walk("Songs"):
     for file in files:
         if file.endswith(".mp3"):
             songsToSort.append(os.path.join(root, file))
+print("Found " + str(len(songsToSort)) + " songs")
+print("==================================================")
 
+curSort = 1
 # Searches if it has a position and if it does place it otherwise create a directory for it
 for song in songsToSort:
     audiofile = eyed3.load(song)
@@ -34,6 +37,9 @@ for song in songsToSort:
             outputStructure.append([audiofile.tag.artist, [[audiofile.tag.album, [[audiofile.tag.title, song]]]]])
         elif placed == 1:
             outputStructure[artistIndex][1].append([audiofile.tag.album, [[audiofile.tag.title, song]]])
+    print("Sorted song " + str(curSort) + "out of " + str(len(songsToSort)))
+    curSort+=1
+print("==================================================")
 
 try:
     shutil.rmtree("Output")
