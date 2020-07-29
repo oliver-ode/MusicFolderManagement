@@ -10,7 +10,7 @@ To use it make sure you have `eyed3` installed using `pip install eyeD3`. If you
 
 ## How to use
 
-To use the python script, put all of your songs into a folder called `Songs`. It does not matter if they are already partially sorted as it will go through the entire file tree. As long as they all have an ID3V2 tag for their title, album and artist it will organize it based on artist -> album -> song. Just run the python script and it should generate a directory called `Output`. It will copy across all of the songs into the sorted directories, so even if the program does fail you will still have your original files untouched.
+To use the python script, put all of your songs into a folder called `Songs`. It does not matter if they are already partially sorted as it will go through the entire file tree. As long as they all have an ID3V2 tag for their title, album and artist it will organize it based on artist -> album -> song. Just run the python script and it should generate a directory called `Output`. It will copy across all of the songs into the sorted directories, so even if the program does fail you will still have your original files untouched. If they are not MP3 files modify the code on line 10 for any other extension. It is only tested with MP3's but it should work with any file that has ID3V2 tags.
 
 ### Tips for music organization in general
 
