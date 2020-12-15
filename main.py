@@ -37,7 +37,7 @@ for song in songsToSort:
             outputStructure.append([audiofile.tag.artist, [[audiofile.tag.album, [[audiofile.tag.title, song]]]]])
         elif placed == 1:
             outputStructure[artistIndex][1].append([audiofile.tag.album, [[audiofile.tag.title, song]]])
-    print("Sorted song " + str(curSort) + "out of " + str(len(songsToSort)))
+    print("Sorted song " + str(curSort) + " out of " + str(len(songsToSort)))
     curSort+=1
 print("==================================================")
 

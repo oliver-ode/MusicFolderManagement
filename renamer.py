@@ -8,6 +8,7 @@ ALBUM=""
 for root, dirs, files in os.walk("Songs"):
     for file in files:
         if file.endswith(".mp3"):
+            print("Trying to set metadata for " + file)
             audiofile = eyed3.load(file)
             audiofile.tag.artist=ARTIST
             audiofile.tag.album=ALBUM
