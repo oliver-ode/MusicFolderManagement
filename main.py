@@ -1,17 +1,53 @@
+# TODO
+# Implement SED for output - https://stackoverflow.com/questions/12714415/python-equivalent-to-sed
+# Implement Colorama for coloured output
+# Multithreaded processing of creating dirs for files
+# Multithreaded copying of files
+# General cleanup
+
 import eyed3, os, shutil
 eyed3.log.setLevel("ERROR") # Gives a bunch of invalid date warnings otherwise
 
+def print_percent_complete(index, total, length, name):
+    percent_complete = round(((index+1)/total * 100), 1)
+    complete = round(percent_complete/(100/length))
+    left = length - complete
+
+    complete_str = "█" * complete
+    left_str = "░" * left
+    buffer = " " * len("finished")
+
+    print(f"{buffer} {name}: [{complete_str}{left_str}] {percent_complete}% complete", end="\r")
+
+    if round(percent_complete) == 100:
+        print(f"Finished {name.lower()}:")
+import time, glob, colorama
 outputStructure = []
 songsToSort = []
 
 # Finds all the songs that need to be organized
-for root, dirs, files in os.walk("Songs"):
-    for file in files:
-        if file.endswith(".mp3"):
-            songsToSort.append(os.path.join(root, file))
+cur = 0
+files = list(glob.iglob("Songs/**", recursive=True))
+tot = len(files)
+for file in files:
+    print_percent_complete(cur, tot, 50, "Scanning")
+    time.sleep(0.02)
+    cur += 1
+    if os.path.isfile(file):
+        songsToSort.append(file)
+
+
+# for root, dirs, files in os.walk("Songs"):
+#     for file in files:
+
+#         print_percent_complete(cur, len(files), 50, "Scanning")
+#         cur += 1
+#         time.sleep(0.02)
+#         if file.endswith(".mp3"):
+#             songsToSort.append(os.path.join(root, file))
 print("Found " + str(len(songsToSort)) + " songs")
 print("==================================================")
-
+exit()
 curSort = 1
 # Searches if it has a position and if it does place it otherwise create a directory for it
 for song in songsToSort:
