@@ -2,6 +2,9 @@
 # Multithreaded copying of files
 # General cleanup
 
+"""
+        IMPORTS
+"""
 import eyed3
 import os
 import shutil
@@ -11,6 +14,10 @@ from colorama import Fore, Back, Style
 
 eyed3.log.setLevel("ERROR") # Gives a bunch of invalid date warnings otherwise
 
+
+"""
+        FUNCTIONS
+"""
 def print_percent_complete(index, total, length, name, compress, width):
     percent_complete = round(((index+1)/total * 100), 1)
     
@@ -31,12 +38,27 @@ def print_percent_complete(index, total, length, name, compress, width):
         else:
             print("")
 
+def removeBadChars(s):
+    bad = ["/", "\\", ":", "*", "?", "<", ">", "|"]
+    _s = list(s)
+    for char in range(len(_s)):
+        if _s[char] in bad:
+            _s[char] = "-"
+    return "".join(_s)
+
+"""
+        MAIN PROCESSING
+"""
+
 outputStructure = []
 songsToSort = []
 termSize = shutil.get_terminal_size()
+
+
+# Finds all the songs that need to be organized
 maxBar = termSize[0] - len("Finished scanning: [] 100.0! complete") - 1
 barSize = min(maxBar, 75)
-# Finds all the songs that need to be organized
+
 cur = 0
 files = list(glob.iglob("Songs/**", recursive=True))
 tot = len(files)
@@ -48,11 +70,13 @@ for file in files:
 
 totalSongs = len(songsToSort)
 print(f"{Fore.CYAN}Found {totalSongs} songs {Style.RESET_ALL}\n")
-# exit()
+
+
+# Searches if it has a position and if it does place it otherwise create a directory for it
 maxBar = termSize[0] - len("Finished sorting: [] 100.0! complete") - 1
 barSize = min(maxBar, 75)
+
 curSort = 0
-# Searches if it has a position and if it does place it otherwise create a directory for it
 for song in songsToSort:
     audiofile = eyed3.load(song)
     placed = 0 # 0 means found nothing, 1 means found artist, 2 means found album
@@ -80,22 +104,19 @@ for song in songsToSort:
     curSort+=1
 print()
 
+
+# Delete output folder if it already exists
 try:
     shutil.rmtree("Output")
 except:
     pass
 os.mkdir("Output")
 
-def removeBadChars(s):
-    bad = ["/", "\\", ":", "*", "?", "<", ">", "|"]
-    _s = list(s)
-    for char in range(len(_s)):
-        if _s[char] in bad:
-            _s[char] = "-"
-    return "".join(_s)
 
+# Copy files to output folder
 maxBar = termSize[0] - len("Finished copying: [] 100.0! complete") - 1
 barSize = min(maxBar, 75)
+
 curCopy = 0
 for artist in outputStructure:
     pathToArtist = os.path.join("Output", removeBadChars(artist[0]))
@@ -107,5 +128,6 @@ for artist in outputStructure:
             shutil.copy(song[1], pathToAlbum)
             print_percent_complete(curCopy, totalSongs, barSize, "Copying", barSize <= 5, termSize[0])
             curCopy += 1
+
 
 print(f"\n{Fore.GREEN}Finished{Style.RESET_ALL}")
