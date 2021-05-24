@@ -5,46 +5,54 @@
 # Multithreaded copying of files
 # General cleanup
 
-import eyed3, os, shutil
+import eyed3
+import os
+import shutil
+import time
+import glob
+from colorama import Fore, Back, Style
+
 eyed3.log.setLevel("ERROR") # Gives a bunch of invalid date warnings otherwise
 
-def print_percent_complete(index, total, length, name):
+def print_percent_complete(index, total, length, name, compress, width):
     percent_complete = round(((index+1)/total * 100), 1)
-    complete = round(percent_complete/(100/length))
-    left = length - complete
-
+    
+    complete = round(percent_complete/(100/length)) if not compress else round(percent_complete/(100/(width-2)))
+    
+    left = length - complete if not compress else width - 2 - complete
     complete_str = "█" * complete
     left_str = "░" * left
     buffer = " " * len("finished")
 
-    print(f"{buffer} {name}: [{complete_str}{left_str}] {percent_complete}% complete", end="\r")
-
+    if not compress:
+        print(f"{buffer} {name}: [{complete_str}{left_str}] {Fore.YELLOW}{percent_complete}% complete {Style.RESET_ALL}", end="\r")
+    else:
+        print(f"[{complete_str}{left_str}]", end="\r")
+    
     if round(percent_complete) == 100:
-        print(f"Finished {name.lower()}:")
-import time, glob, colorama
+        if not compress:
+            print(f"Finished {name.lower()}: [{complete_str}{left_str}] {Fore.GREEN}{percent_complete}% complete {Style.RESET_ALL}")
+        else:
+            print("")
+
 outputStructure = []
 songsToSort = []
+termSize = shutil.get_terminal_size()
+maxBar = termSize[0] - len("Finished scanning: [] 100.0! complete") - 1
+print(maxBar)
+barSize = min(maxBar, 75)
 
 # Finds all the songs that need to be organized
 cur = 0
 files = list(glob.iglob("Songs/**", recursive=True))
 tot = len(files)
 for file in files:
-    print_percent_complete(cur, tot, 50, "Scanning")
-    time.sleep(0.02)
+    print_percent_complete(cur, tot, barSize, "Scanning", barSize <= 5, termSize[0])
     cur += 1
+    time.sleep(0.02)
     if os.path.isfile(file):
         songsToSort.append(file)
 
-
-# for root, dirs, files in os.walk("Songs"):
-#     for file in files:
-
-#         print_percent_complete(cur, len(files), 50, "Scanning")
-#         cur += 1
-#         time.sleep(0.02)
-#         if file.endswith(".mp3"):
-#             songsToSort.append(os.path.join(root, file))
 print("Found " + str(len(songsToSort)) + " songs")
 print("==================================================")
 exit()
