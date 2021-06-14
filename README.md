@@ -1,5 +1,7 @@
 # Music folder management
 
+![Screenshot of manager](screenshot.png "Screenshot")
+
 ## What does it do
 
 I was busy expanding my Plex server library of songs and I have enough patience to manually add all of the ID3V2 tag information for any songs that don't have them but when it gets to organizing them into a nice directory structure it will just take too long. I decided to make this Python program to do that for me. It takes the existing tag information for the artist, album and song title and reorganizes the music into a nice file system structure -> `Output/Artist/Album/Song.mp3`.
